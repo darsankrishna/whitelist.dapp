@@ -10,7 +10,6 @@ async function main() {
   const whitelist = [
     { address: deployer.address, spots: 2 },
     { address: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8", spots: 2 }, // addr1 from hardhat default
-    { address: "0x886e497df7fe63e97821dbfa48b04de5de1d06e9", spots: 2 }, // addr2
     // Add more addresses here
   ];
 
