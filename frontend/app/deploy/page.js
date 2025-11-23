@@ -11,7 +11,7 @@ export default function Deploy() {
     const [merkleRoot, setMerkleRoot] = useState("");
     const [deployedAddress, setDeployedAddress] = useState("");
     const [loading, setLoading] = useState(false);
-    const [status, setStatus] = useState(null);
+    const [parsedWhitelist, setParsedWhitelist] = useState([]);
 
     const connectWallet = async () => {
         try {
@@ -56,6 +56,7 @@ export default function Deploy() {
                 return;
             }
 
+            setParsedWhitelist(whitelist); // Save to state for deployment
             const tree = generateMerkleTree(whitelist);
             const root = getMerkleRoot(tree);
             setMerkleRoot(root);
@@ -99,7 +100,7 @@ export default function Deploy() {
             // Optionally save to local storage or context so the main page can pick it up
             localStorage.setItem("whitelistContractAddress", contractAddress);
             // Save the whitelist data used for this contract so verification works
-            localStorage.setItem("whitelistData", JSON.stringify(whitelist));
+            localStorage.setItem("whitelistData", JSON.stringify(parsedWhitelist));
 
         } catch (err) {
             console.error(err);
