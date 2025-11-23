@@ -10,6 +10,7 @@ export default function Home() {
     const [address, setAddress] = useState("");
     const [loading, setLoading] = useState(false);
     const [status, setStatus] = useState(null); // { type: 'success' | 'error', message: string }
+    const [contractAddress, setContractAddress] = useState(WHITELIST_CONTRACT_ADDRESS);
 
     const connectWallet = async () => {
         try {
@@ -58,18 +59,14 @@ export default function Home() {
             const proof = getProof(tree, userEntry.address, userEntry.spots);
 
             // Interact with Contract
-            // Note: If contract is not deployed yet or address is placeholder, this will fail.
-            // For now, let's assume we just want to verify the proof locally if contract is not ready,
-            // BUT the requirement is to verify using the contract.
-
-            if (WHITELIST_CONTRACT_ADDRESS === "YOUR_CONTRACT_ADDRESS_HERE") {
+            if (!contractAddress || contractAddress === "YOUR_CONTRACT_ADDRESS_HERE") {
                 // Fallback for demo if contract not deployed
                 setStatus({ type: "success", message: "You are in the whitelist! (Local verification only, contract not connected)" });
                 setLoading(false);
                 return;
             }
 
-            const contract = new ethers.Contract(WHITELIST_CONTRACT_ADDRESS, abi, signer);
+            const contract = new ethers.Contract(contractAddress, abi, signer);
             const isWhitelisted = await contract.checkInWhitelist(proof, userEntry.spots);
 
             if (isWhitelisted) {
@@ -87,6 +84,12 @@ export default function Home() {
     };
 
     useEffect(() => {
+        // Check local storage for deployed contract
+        const storedAddress = localStorage.getItem("whitelistContractAddress");
+        if (storedAddress) {
+            setContractAddress(storedAddress);
+        }
+
         if (window.ethereum) {
             window.ethereum.on("accountsChanged", (accounts) => {
                 if (accounts.length > 0) {
@@ -95,6 +98,12 @@ export default function Home() {
                 } else {
                     setWalletConnected(false);
                     setAddress("");
+                }
+            });
+            window.ethereum.request({ method: 'eth_accounts' }).then(accounts => {
+                if (accounts.length > 0) {
+                    setAddress(accounts[0]);
+                    setWalletConnected(true);
                 }
             });
         }
@@ -117,6 +126,16 @@ export default function Home() {
                         </button>
                     )}
 
+                    <div className="input-group">
+                        <label>Contract Address:</label>
+                        <input
+                            type="text"
+                            value={contractAddress}
+                            onChange={(e) => setContractAddress(e.target.value)}
+                            placeholder="0x..."
+                        />
+                    </div>
+
                     {walletConnected && (
                         <button className="button" onClick={checkWhitelist} disabled={loading}>
                             {loading ? "Verifying..." : "Check Eligibility"}
@@ -128,8 +147,20 @@ export default function Home() {
                             {status.message}
                         </div>
                     )}
+
+                    <div style={{ marginTop: '20px', borderTop: '1px solid #eee', paddingTop: '20px' }}>
+                        <p>Need to deploy a new contract?</p>
+                        <a href="/deploy" className="button secondary">Go to Deploy Page</a>
+                    </div>
                 </div>
             </div>
+            <style jsx>{`
+                .input-group { margin: 20px 0; text-align: left; }
+                .input-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+                input[type="text"] { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-family: monospace; }
+                .button.secondary { background-color: #6c757d; display: inline-block; text-decoration: none; color: white; font-size: 0.9rem; }
+                .button.secondary:hover { background-color: #5a6268; }
+            `}</style>
         </main>
     );
 }

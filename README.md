@@ -64,11 +64,12 @@ cd ..
 ```
 
 ### 3. Environment Setup
-Create a `.env` file in the root directory:
+Create a `.env` file in the root directory (Optional if using Frontend Deployer):
 
 ```env
-PRIVATEKEY=your_wallet_private_key
 HOODIRPCURL=https://0xrpc.io/hoodi
+# PRIVATEKEY is only needed if you deploy via command line scripts
+PRIVATEKEY=your_wallet_private_key
 ```
 
 ### 4. Run the Frontend
@@ -83,24 +84,30 @@ Open [http://localhost:3000](http://localhost:3000) in your browser.
 
 ## 📝 How to Update the Whitelist
 
-Want to add your friends?
+You can now deploy your own whitelist contract directly from the website!
 
-1.  **Edit the List**: Open `frontend/constants/whitelistData.js` and add their addresses.
-    ```javascript
-    export const whitelistData = [
-      { address: "0xYourAddress...", spots: 2 },
-      { address: "0xFriendAddress...", spots: 2 },
-    ];
-    ```
-2.  **Re-Deploy Contract**: Since the list changed, the **Merkle Root** changed. You must update the blockchain.
+1.  **Go to the Deploy Page**: Click "Go to Deploy Page" at the bottom of the home page, or navigate to `/deploy`.
+2.  **Enter Addresses**: Paste your list of addresses in the text area. You can use JSON format or a simple CSV list (address,spots).
+    *   Example JSON: `[{"address": "0x123...", "spots": 2}, {"address": "0x456...", "spots": 1}]`
+    *   Example CSV:
+        ```
+        0x123..., 2
+        0x456..., 1
+        ```
+3.  **Generate Root**: Click "Generate Root" to calculate the Merkle Root.
+4.  **Deploy**: Click "Deploy Contract". MetaMask will ask you to confirm the transaction.
+5.  **Done!**: Once deployed, the new contract address will be automatically saved to your browser's local storage and used for verification on the home page.
+
+### Legacy Method (Using Scripts)
+If you prefer using the command line:
+
+1.  **Edit the List**: Open `frontend/constants/whitelistData.js`.
+2.  **Re-Deploy**:
     ```bash
-    # From the root folder
     npx hardhat run scripts/deploy.js --network hoodi
     ```
-3.  **Update Frontend**:
-    *   Copy the **new contract address** from the terminal.
-    *   Paste it into `frontend/constants/index.js`.
-    *   Commit and push changes (if deployed to Vercel, it will auto-update).
+    *(Note: This requires a `.env` file with `PRIVATEKEY`)*
+3.  **Update Frontend**: Copy the new address into `frontend/constants/index.js`.
 
 ---
 
