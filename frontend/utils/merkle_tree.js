@@ -9,9 +9,11 @@ if (typeof window !== 'undefined') {
 
 export function encodeLeaf(address, spots) {
     // Same as `abi.encodePacked` in Solidity
+    // We lowercase the address to avoid "bad address checksum" errors if the user
+    // provides a mixed-case address with an incorrect checksum.
     return ethers.AbiCoder.defaultAbiCoder().encode(
         ["address", "uint64"],
-        [address, spots]
+        [address.toLowerCase(), spots]
     );
 }
 
