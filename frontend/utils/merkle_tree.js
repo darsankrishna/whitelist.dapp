@@ -13,9 +13,14 @@ export function encodeLeaf(address, spots) {
 export function generateMerkleTree(whitelist) {
     // whitelist is an array of { address, spots }
     const leafNodes = whitelist.map(entry => {
-        const encoded = encodeLeaf(entry.address, entry.spots);
-        // Use ethers.getBytes to convert hex string to Uint8Array, avoiding Buffer.from
-        return keccak256(ethers.getBytes(encoded));
+        try {
+            const encoded = encodeLeaf(entry.address, entry.spots);
+            // Use ethers.getBytes to convert hex string to Uint8Array, avoiding Buffer.from
+            return keccak256(ethers.getBytes(encoded));
+        } catch (err) {
+            console.error("Error encoding leaf:", entry, err);
+            throw err;
+        }
     });
 
     const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
