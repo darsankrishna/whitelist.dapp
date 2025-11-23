@@ -14,7 +14,8 @@ export function generateMerkleTree(whitelist) {
     // whitelist is an array of { address, spots }
     const leafNodes = whitelist.map(entry => {
         const encoded = encodeLeaf(entry.address, entry.spots);
-        return keccak256(Buffer.from(encoded.slice(2), 'hex'));
+        // Use ethers.getBytes to convert hex string to Uint8Array, avoiding Buffer.from
+        return keccak256(ethers.getBytes(encoded));
     });
 
     const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
@@ -27,6 +28,6 @@ export function getMerkleRoot(tree) {
 
 export function getProof(tree, address, spots) {
     const encoded = encodeLeaf(address, spots);
-    const leaf = keccak256(Buffer.from(encoded.slice(2), 'hex'));
+    const leaf = keccak256(ethers.getBytes(encoded));
     return tree.getHexProof(leaf);
 }
