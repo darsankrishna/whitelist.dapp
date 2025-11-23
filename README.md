@@ -80,23 +80,6 @@ npm run dev
 ```
 Open [http://localhost:3000](http://localhost:3000) in your browser.
 
----
-
-## 🌐 Deploy to Vercel (Free)
-
-Share your DApp with the world by deploying it to Vercel.
-
-1.  **Push to GitHub**: Make sure your project is pushed to a GitHub repository.
-2.  **Go to Vercel**: Log in to [vercel.com](https://vercel.com).
-3.  **Add New Project**: Click "Add New..." -> "Project" and select your repo.
-4.  **Configure Project**:
-    *   **Framework Preset**: Next.js
-    *   **Root Directory**: Click "Edit" and select `frontend`. **(Crucial Step!)**
-5.  **Deploy**: Click "Deploy".
-
-Vercel will give you a live link (e.g., `https://your-dapp.vercel.app`).
-
----
 
 ## 📝 How to Update the Whitelist
 
