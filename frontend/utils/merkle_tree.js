@@ -1,5 +1,4 @@
 import { MerkleTree } from 'merkletreejs';
-import keccak256 from 'keccak256';
 import { ethers } from 'ethers';
 
 export function encodeLeaf(address, spots) {
@@ -15,15 +14,17 @@ export function generateMerkleTree(whitelist) {
     const leafNodes = whitelist.map(entry => {
         try {
             const encoded = encodeLeaf(entry.address, entry.spots);
-            // Use ethers.getBytes to convert hex string to Uint8Array, avoiding Buffer.from
-            return keccak256(ethers.getBytes(encoded));
+            // Use ethers.keccak256 which handles hex strings directly
+            return ethers.keccak256(encoded);
         } catch (err) {
             console.error("Error encoding leaf:", entry, err);
             throw err;
         }
     });
 
-    const merkleTree = new MerkleTree(leafNodes, keccak256, { sortPairs: true });
+    // MerkleTree expects buffers or strings. ethers.keccak256 returns 0x-prefixed hex string.
+    // merkletreejs handles this fine usually, but let's be explicit.
+    const merkleTree = new MerkleTree(leafNodes, ethers.keccak256, { sortPairs: true });
     return merkleTree;
 }
 
@@ -33,6 +34,6 @@ export function getMerkleRoot(tree) {
 
 export function getProof(tree, address, spots) {
     const encoded = encodeLeaf(address, spots);
-    const leaf = keccak256(ethers.getBytes(encoded));
+    const leaf = ethers.keccak256(encoded);
     return tree.getHexProof(leaf);
 }
