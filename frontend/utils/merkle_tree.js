@@ -1,5 +1,11 @@
 import { MerkleTree } from 'merkletreejs';
 import { ethers } from 'ethers';
+import { Buffer } from 'buffer';
+
+// Polyfill Buffer for the browser environment if needed by libraries
+if (typeof window !== 'undefined') {
+    window.Buffer = window.Buffer || Buffer;
+}
 
 export function encodeLeaf(address, spots) {
     // Same as `abi.encodePacked` in Solidity

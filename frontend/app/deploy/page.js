@@ -62,7 +62,7 @@ export default function Deploy() {
             setStatus({ type: "success", message: `Merkle Root Generated: ${root}` });
         } catch (err) {
             console.error(err);
-            setStatus({ type: "error", message: "Error generating Merkle Root." });
+            setStatus({ type: "error", message: `Error generating Merkle Root: ${err.message}` });
         }
     };
 
