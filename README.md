@@ -1,6 +1,6 @@
 # Whitelist Merkle DApp
 
-A decentralized application (DApp) that allows users to verify if they are whitelisted for an exclusive NFT drop using **Merkle Tree proofs**. This approach is gas-efficient because it doesn't store every single address on the blockchain—only a single "root" hash.
+A decentralized application (DApp) that allows users to verify if they are whitelisted for an event using **Merkle Tree proofs**. This approach is gas-efficient because it doesn't store every single address on the blockchain—only a single "root" hash.
 
 ---
 
