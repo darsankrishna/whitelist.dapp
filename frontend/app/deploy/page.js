@@ -98,6 +98,8 @@ export default function Deploy() {
 
             // Optionally save to local storage or context so the main page can pick it up
             localStorage.setItem("whitelistContractAddress", contractAddress);
+            // Save the whitelist data used for this contract so verification works
+            localStorage.setItem("whitelistData", JSON.stringify(whitelist));
 
         } catch (err) {
             console.error(err);

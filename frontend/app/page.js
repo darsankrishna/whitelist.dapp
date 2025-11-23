@@ -43,10 +43,20 @@ export default function Home() {
             const userAddress = await signer.getAddress();
 
             // Generate Tree and Proof
-            const tree = generateMerkleTree(whitelistData);
+            let currentWhitelist = whitelistData;
+            const storedWhitelist = localStorage.getItem("whitelistData");
+            if (storedWhitelist) {
+                try {
+                    currentWhitelist = JSON.parse(storedWhitelist);
+                } catch (e) {
+                    console.error("Error parsing stored whitelist", e);
+                }
+            }
+
+            const tree = generateMerkleTree(currentWhitelist);
             // Find spots for the user. In a real app, this might come from an API or user input.
             // Here we search the whitelistData for the user's address.
-            const userEntry = whitelistData.find(
+            const userEntry = currentWhitelist.find(
                 (entry) => entry.address.toLowerCase() === userAddress.toLowerCase()
             );
 
