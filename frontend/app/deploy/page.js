@@ -11,6 +11,7 @@ export default function Deploy() {
     const [merkleRoot, setMerkleRoot] = useState("");
     const [deployedAddress, setDeployedAddress] = useState("");
     const [loading, setLoading] = useState(false);
+    const [status, setStatus] = useState(null);
     const [parsedWhitelist, setParsedWhitelist] = useState([]);
 
     const connectWallet = async () => {
