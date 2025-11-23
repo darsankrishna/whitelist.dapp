@@ -68,6 +68,14 @@ export default function Home() {
 
             const proof = getProof(tree, userEntry.address, userEntry.spots);
 
+            // Debugging Logs
+            console.log("--- Debugging Verification ---");
+            console.log("User Address:", userEntry.address);
+            console.log("Spots:", userEntry.spots);
+            console.log("Merkle Root (Frontend):", tree.getHexRoot());
+            console.log("Proof:", proof);
+            console.log("Contract Address:", contractAddress);
+
             // Interact with Contract
             if (!contractAddress || contractAddress === "YOUR_CONTRACT_ADDRESS_HERE") {
                 // Fallback for demo if contract not deployed
@@ -77,7 +85,24 @@ export default function Home() {
             }
 
             const contract = new ethers.Contract(contractAddress, abi, signer);
+
+            // Check what the contract thinks the root is
+            try {
+                const contractRoot = await contract.merkleRoot();
+                console.log("Merkle Root (Contract):", contractRoot);
+
+                if (contractRoot !== tree.getHexRoot()) {
+                    console.error("ROOT MISMATCH! The contract has a different root than the frontend.");
+                    setStatus({ type: "error", message: "Verification Failed: Contract Merkle Root mismatch. Did you redeploy?" });
+                    setLoading(false);
+                    return;
+                }
+            } catch (e) {
+                console.error("Could not fetch contract root:", e);
+            }
+
             const isWhitelisted = await contract.checkInWhitelist(proof, userEntry.spots);
+            console.log("isWhitelisted result:", isWhitelisted);
 
             if (isWhitelisted) {
                 setStatus({ type: "success", message: "Success! You are whitelisted." });
