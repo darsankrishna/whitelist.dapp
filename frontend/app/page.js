@@ -105,7 +105,7 @@ export default function Home() {
             <div className="container">
                 <div className="card">
                     <h1>Whitelist Proof</h1>
-                    <p>Verify your eligibility for the exclusive NFT drop using Merkle Tree proofs.</p>
+                    <p>Verify your eligibility for an event using Merkle Tree proofs.</p>
 
                     {walletConnected ? (
                         <div className="wallet-info">
