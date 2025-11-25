@@ -14,7 +14,7 @@ A decentralized application (DApp) that allows users to verify if they are white
 
 ## 📸 UI Screenshots
 
-![Whitelist Verification UI](/frontend/public/screenshot_placeholder.png)
+![Whitelist Verification UI](/frontend/public/1.png)
 *(Note: Add a screenshot of your running application here)*
 
 ---
