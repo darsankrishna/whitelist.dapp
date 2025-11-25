@@ -18,8 +18,8 @@ describe("Whitelist", function () {
 
         // Create whitelist data
         const whitelist = [
-            { address: owner.address, spots: spots },
-            { address: addr1.address, spots: spots },
+            owner.address,
+            addr1.address,
         ];
 
         // Generate Merkle Tree
@@ -35,27 +35,18 @@ describe("Whitelist", function () {
     });
 
     it("Should verify a valid proof for a whitelisted user", async function () {
-        const proof = getProof(merkleTree, addr1.address, spots);
-        const verified = await whitelistContract.connect(addr1).checkInWhitelist(proof, spots);
+        const proof = getProof(merkleTree, addr1.address);
+        const verified = await whitelistContract.connect(addr1).checkInWhitelist(proof);
         expect(verified).to.be.true;
     });
 
     it("Should reject an invalid proof for a non-whitelisted user", async function () {
-        const proof = getProof(merkleTree, addr2.address, spots); // addr2 is not in the tree, so this proof will be empty or invalid for the root
-        // Actually getProof might return empty array if not found, or we can try to fake a proof.
-        // But simpler: just check if checkInWhitelist returns false.
-
         // If we generate a proof for addr2, it won't be valid because addr2 wasn't in the tree generation.
         // Let's try to use addr1's proof for addr2.
-        const proofForAddr1 = getProof(merkleTree, addr1.address, spots);
-        const verified = await whitelistContract.connect(addr2).checkInWhitelist(proofForAddr1, spots);
+        const proofForAddr1 = getProof(merkleTree, addr1.address);
+        const verified = await whitelistContract.connect(addr2).checkInWhitelist(proofForAddr1);
         expect(verified).to.be.false;
     });
 
-    it("Should reject if maxAllowanceToMint doesn't match", async function () {
-        const proof = getProof(merkleTree, addr1.address, spots);
-        const wrongSpots = spots + 1;
-        const verified = await whitelistContract.connect(addr1).checkInWhitelist(proof, wrongSpots);
-        expect(verified).to.be.false;
-    });
+
 });

@@ -3,11 +3,11 @@ const { ethers } = require("hardhat");
 const keccak256 = require("keccak256");
 const { MerkleTree } = require("merkletreejs");
 
-function encodeLeaf(address, spots) {
+function encodeLeaf(address) {
   // Same as `abi.encodePacked` in Solidity
   return ethers.AbiCoder.defaultAbiCoder().encode(
-    ["address", "uint64"],
-    [address, spots]
+    ["address"],
+    [address]
   );
 }
 
@@ -19,12 +19,12 @@ describe("Check if merkle root is working", function () {
 
     // Create an array of elements you wish to encode in the Merkle Tree
     const list = [
-      encodeLeaf(owner.address, 2),
-      encodeLeaf(addr1.address, 2),
-      encodeLeaf(addr2.address, 2),
-      encodeLeaf(addr3.address, 2),
-      encodeLeaf(addr4.address, 2),
-      encodeLeaf(addr5.address, 2),
+      encodeLeaf(owner.address),
+      encodeLeaf(addr1.address),
+      encodeLeaf(addr2.address),
+      encodeLeaf(addr3.address),
+      encodeLeaf(addr4.address),
+      encodeLeaf(addr5.address),
     ];
 
     // Create the Merkle tree using the hashing algorithm `keccak256`
@@ -49,12 +49,12 @@ describe("Check if merkle root is working", function () {
 
     // Provide the Merkle Proof to the contract, and ensure that it can verify
     // that this leaf node was indeed part of the Merkle Tree
-    let verified = await Whitelist.checkInWhitelist(proof, 2);
+    let verified = await Whitelist.checkInWhitelist(proof);
     expect(verified).to.equal(true);
 
     // Provide an invalid Merkle Proof to the contract, and ensure that
     // it can verify that this leaf node was NOT part of the Merkle Tree
-    verified = await Whitelist.checkInWhitelist([], 2);
+    verified = await Whitelist.checkInWhitelist([]);
     expect(verified).to.equal(false);
   });
 });

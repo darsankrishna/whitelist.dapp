@@ -7,25 +7,25 @@ if (typeof window !== 'undefined') {
     window.Buffer = window.Buffer || Buffer;
 }
 
-export function encodeLeaf(address, spots) {
+export function encodeLeaf(address) {
     // Same as `abi.encodePacked` in Solidity
     // We lowercase the address to avoid "bad address checksum" errors if the user
     // provides a mixed-case address with an incorrect checksum.
     return ethers.AbiCoder.defaultAbiCoder().encode(
-        ["address", "uint64"],
-        [address.toLowerCase(), spots]
+        ["address"],
+        [address.toLowerCase()]
     );
 }
 
 export function generateMerkleTree(whitelist) {
-    // whitelist is an array of { address, spots }
-    const leafNodes = whitelist.map(entry => {
+    // whitelist is an array of addresses (strings)
+    const leafNodes = whitelist.map(address => {
         try {
-            const encoded = encodeLeaf(entry.address, entry.spots);
+            const encoded = encodeLeaf(address);
             // Use ethers.keccak256 which handles hex strings directly
             return ethers.keccak256(encoded);
         } catch (err) {
-            console.error("Error encoding leaf:", entry, err);
+            console.error("Error encoding leaf:", address, err);
             throw err;
         }
     });
@@ -40,8 +40,8 @@ export function getMerkleRoot(tree) {
     return tree.getHexRoot();
 }
 
-export function getProof(tree, address, spots) {
-    const encoded = encodeLeaf(address, spots);
+export function getProof(tree, address) {
+    const encoded = encodeLeaf(address);
     const leaf = ethers.keccak256(encoded);
     return tree.getHexProof(leaf);
 }

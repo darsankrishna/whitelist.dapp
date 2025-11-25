@@ -21,8 +21,8 @@ contract Whitelist {
      *  takes in a proof and maxAllowanceToMint. maxAllowanceToMint is a variable that keeps track of 
      * the number of NFT's a given address can mint.
      */
-    function checkInWhitelist(bytes32[] calldata proof, uint64 maxAllowanceToMint) view public returns (bool) {
-        bytes32 leaf = keccak256(abi.encode(msg.sender, maxAllowanceToMint));
+    function checkInWhitelist(bytes32[] calldata proof) view public returns (bool) {
+        bytes32 leaf = keccak256(abi.encode(msg.sender));
         bool verified = MerkleProof.verify(proof, merkleRoot, leaf);
         return verified;
     }

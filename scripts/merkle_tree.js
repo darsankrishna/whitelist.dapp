@@ -1,24 +1,23 @@
 const { MerkleTree } = require('merkletreejs');
 const keccak256 = require('keccak256');
 
-function encodeLeaf(address, spots) {
-  // Same as `abi.encodePacked(msg.sender, maxAllowanceToMint)` in Solidity?
-  // Wait, the contract uses `abi.encode(msg.sender, maxAllowanceToMint)`.
+function encodeLeaf(address) {
+  // Same as `abi.encode(msg.sender)` in Solidity
   // abi.encode in Solidity pads to 32 bytes.
-  // ethers.utils.defaultAbiCoder.encode(['address', 'uint64'], [address, spots])
-  
+  // ethers.utils.defaultAbiCoder.encode(['address'], [address])
+
   // Let's use ethers for encoding to match Solidity's abi.encode
   const { ethers } = require("hardhat");
   return ethers.AbiCoder.defaultAbiCoder().encode(
-    ['address', 'uint64'],
-    [address, spots]
+    ['address'],
+    [address]
   );
 }
 
 function generateMerkleTree(whitelist) {
-  // whitelist is an array of { address, spots }
-  const leafNodes = whitelist.map(entry => {
-    const encoded = encodeLeaf(entry.address, entry.spots);
+  // whitelist is an array of addresses
+  const leafNodes = whitelist.map(address => {
+    const encoded = encodeLeaf(address);
     return keccak256(Buffer.from(encoded.slice(2), 'hex'));
   });
 
@@ -30,8 +29,8 @@ function getMerkleRoot(tree) {
   return tree.getHexRoot();
 }
 
-function getProof(tree, address, spots) {
-  const encoded = encodeLeaf(address, spots);
+function getProof(tree, address) {
+  const encoded = encodeLeaf(address);
   const leaf = keccak256(Buffer.from(encoded.slice(2), 'hex'));
   return tree.getHexProof(leaf);
 }

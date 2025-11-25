@@ -38,17 +38,17 @@ export default function Deploy() {
                 return;
             }
 
-            // Parse input: assume JSON array of objects {address, spots} or simple CSV
+            // Parse input: assume JSON array of strings or simple CSV
             let whitelist;
             try {
                 whitelist = JSON.parse(whitelistInput);
             } catch (e) {
                 // Fallback to simple CSV parsing if JSON fails
-                // Format: address,spots (one per line)
+                // Format: address (one per line)
                 whitelist = whitelistInput.split("\n").map(line => {
-                    const [addr, spots] = line.split(",");
-                    if (!addr || !spots) return null;
-                    return { address: addr.trim(), spots: parseInt(spots.trim()) };
+                    const addr = line.trim();
+                    if (!addr) return null;
+                    return addr;
                 }).filter(item => item !== null);
             }
 
@@ -153,7 +153,7 @@ export default function Deploy() {
                         <label>Whitelist Data (JSON format):</label>
                         <textarea
                             rows="10"
-                            placeholder='[{"address": "0x...", "spots": 2}, ...]'
+                            placeholder='["0x...", "0x..."]'
                             value={whitelistInput}
                             onChange={(e) => setWhitelistInput(e.target.value)}
                         />
