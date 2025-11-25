@@ -54,24 +54,24 @@ export default function Home() {
             }
 
             const tree = generateMerkleTree(currentWhitelist);
-            // Find spots for the user. In a real app, this might come from an API or user input.
-            // Here we search the whitelistData for the user's address.
-            const userEntry = currentWhitelist.find(
-                (entry) => entry.address.toLowerCase() === userAddress.toLowerCase()
+            // Find if user is in the whitelist.
+            // currentWhitelist is an array of strings (addresses).
+            const isUserInWhitelist = currentWhitelist.some(
+                (addr) => addr.toLowerCase() === userAddress.toLowerCase()
             );
 
-            if (!userEntry) {
+            if (!isUserInWhitelist) {
                 setStatus({ type: "error", message: "You are NOT in the whitelist." });
                 setLoading(false);
                 return;
             }
 
-            const proof = getProof(tree, userEntry.address, userEntry.spots);
+            const proof = getProof(tree, userAddress);
 
             // Debugging Logs
             console.log("--- Debugging Verification ---");
-            console.log("User Address:", userEntry.address);
-            console.log("Spots:", userEntry.spots);
+            console.log("User Address:", userAddress);
+            // console.log("Spots:", userEntry.spots); // Removed
             console.log("Merkle Root (Frontend):", tree.getHexRoot());
             console.log("Proof:", proof);
             console.log("Contract Address:", contractAddress);
@@ -101,7 +101,7 @@ export default function Home() {
                 console.error("Could not fetch contract root:", e);
             }
 
-            const isWhitelisted = await contract.checkInWhitelist(proof, userEntry.spots);
+            const isWhitelisted = await contract.checkInWhitelist(proof);
             console.log("isWhitelisted result:", isWhitelisted);
 
             if (isWhitelisted) {
